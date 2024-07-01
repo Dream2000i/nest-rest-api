@@ -5,10 +5,10 @@ export type ProductDocument = Product & Document;
 
 @Schema()
 export class Product {
-  @Prop()
+  @Prop({ required: true, minlength: 4 })
   title: string;
 
-  @Prop()
+  @Prop({ required: true, min: 100 })
   price: number;
 }
 

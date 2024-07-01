@@ -15,7 +15,7 @@ export class ProductsService {
     return this.productModel.find().exec();
   }
 
-  async getById(id: string): Promise<Product> {
+  async getById(id: string): Promise<Product | null> {
     return this.productModel.findById(id);
   }
 
@@ -24,11 +24,14 @@ export class ProductsService {
     return newProduct.save();
   }
 
-  async remove(id: string): Promise<Product> {
+  async remove(id: string): Promise<Product | null> {
     return this.productModel.findByIdAndDelete(id);
   }
 
-  async update(id: string, productDto: CreateProductDto): Promise<Product> {
+  async update(
+    id: string,
+    productDto: CreateProductDto,
+  ): Promise<Product | null> {
     return this.productModel.findByIdAndUpdate(id, productDto, { new: true });
   }
 }

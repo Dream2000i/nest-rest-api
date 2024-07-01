@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,8 +14,9 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductsService } from "./products.service";
 import { Product } from "./schemas/product.schema";
+import { ParamsProducts } from "./dto/params-product.dto";
 
-@Controller("products")
+@Controller("api/v1/products")
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -25,27 +26,38 @@ export class ProductsController {
   }
 
   @Get(":id")
-  getOne(@Param("id") id: string): Promise<Product> {
-    return this.productsService.getById(id);
+  async getOne(@Param() { id }: ParamsProducts): Promise<Product> {
+    const result = await this.productsService.getById(id);
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Header("Cache-Control", "none")
   create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productsService.create(createProductDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string): Promise<Product> {
-    return this.productsService.remove(id);
+  async remove(@Param() { id }: ParamsProducts): Promise<Product> {
+    const result = await this.productsService.remove(id);
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
   }
 
   @Put(":id")
-  update(
+  async update(
+    @Param() { id }: ParamsProducts,
     @Body() updateProductDto: UpdateProductDto,
-    @Param("id") id: string,
   ): Promise<Product> {
-    return this.productsService.update(id, updateProductDto);
+    const result = await this.productsService.update(id, updateProductDto);
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
   }
 }
